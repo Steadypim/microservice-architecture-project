@@ -1,4 +1,4 @@
-package dev.steadypim.fraud;
+package dev.steadypim.clients.fraud;
 
 public record FraudCheckResponse(Boolean isFraudster) {
 }

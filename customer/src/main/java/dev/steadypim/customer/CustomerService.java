@@ -2,17 +2,18 @@ package dev.steadypim.customer;
 
 import dev.steadypim.clients.fraud.FraudCheckResponse;
 import dev.steadypim.clients.fraud.FraudClient;
+import dev.steadypim.clients.notification.NotificationClient;
+import dev.steadypim.clients.notification.NotificationRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @AllArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final RestTemplate restTemplate;
     private final FraudClient fraudClient;
+    private final NotificationClient notificationClient;
 
     public void registerCustomer(CustomerRegistrationRequest request) {
         Customer customer = Customer.builder()
@@ -31,7 +32,13 @@ public class CustomerService {
             throw new IllegalStateException("fraudster");
         }
 
-        // todo: send notification
-
+        notificationClient.sendNotification(
+                new NotificationRequest(
+                        customer.getId(),
+                        customer.getEmail(),
+                        String.format("Hi %s, welcome to Steadypim's services",
+                                customer.getFirstName())
+                )
+        );
     }
 }
